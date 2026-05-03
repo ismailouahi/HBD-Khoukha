@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday, ma Khoukha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="romantic-bg" aria-hidden="true">
+      <span class="heart h1"></span><span class="heart h2"></span><span class="heart h3"></span>
+      <span class="heart h4"></span><span class="heart h5"></span><span class="spark s1"></span>
+      <span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span>
+      <span class="spark s5"></span><span class="spark s6"></span>
+    </div>
+
+    <main class="app" aria-live="polite">
+      <section class="screen is-active" data-screen="1">
+        <article class="card card-breathe">
+          <h1 class="title shimmer">Happy Birthday, ma Khoukha</h1>
+          <p class="text">Un jour spécial pour une personne qui rend mon monde plus doux.</p>
+          <p class="subtext">Cette petite surprise est pour toi.</p>
+          <button class="btn next-btn" type="button">Découvrir la suite <span>→</span></button>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="2" hidden>
+        <article class="card poem-card">
+          <h2 class="title">Un petit poème, juste pour toi.</h2>
+          <figure class="poem-frame">
+            <img src="assets/poeme.png" alt="Poème pour Khoukha" class="poem-image" />
+          </figure>
+          <button class="btn next-btn" type="button">Continuer <span>→</span></button>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="3" hidden>
+        <article class="card letter-card">
+          <h2 class="title">Un mot pour toi</h2>
+          <p class="letter-line">Chaque année qui passe me donne envie d’être encore plus près de toi.</p>
+          <p class="letter-line">Près de ton sourire, près de ta douceur, près de tout ce que tu es.</p>
+          <p class="letter-line">Ma Khoukha, mon bonheur simple, mon refuge, ma fiancée…</p>
+          <p class="letter-line">Je te souhaite un anniversaire aussi beau que la place que tu as dans mon cœur.</p>
+          <button class="btn next-btn" type="button">Une dernière surprise <span>→</span></button>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="4" hidden>
+        <article class="card final-card">
+          <h2 class="title">Ta chanson</h2>
+          <p class="text">Appuie sur play, et laisse cette chanson porter ce que les mots ne disent pas toujours.</p>
+          <button class="play-btn" id="playBtn" type="button" aria-label="Jouer la chanson sur YouTube">
+            <span class="play-icon">▶</span>
+          </button>
+          <p class="play-label">Play</p>
+          <p class="final-note">Joyeux anniversaire, ma Khoukha.</p>
+        </article>
+      </section>
+    </main>
+
+    <p class="progress" id="progressIndicator">1/4</p>
+
+    <script src="script.js"></script>
+  </body>
+</html>
