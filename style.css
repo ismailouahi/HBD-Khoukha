@@ -32,14 +32,14 @@ body {
 }
 
 .app {
-  display: grid;
-  place-items: start center;
-  padding: 1rem;
-  position: relative;
+  position: fixed;
+  inset: 0;
   z-index: 2;
 }
 
 .screen {
+  position: fixed;
+  inset: 0;
   display: none;
   align-items: flex-start;
   justify-content: center;
@@ -47,14 +47,15 @@ body {
   transform: translateY(24px) scale(.985);
   filter: blur(2px);
   transition: opacity .65s ease, transform .65s ease, filter .65s ease;
-  padding: 1rem 0 5.5rem;
+  padding: clamp(32px, 7vh, 72px) 20px calc(28px + env(safe-area-inset-bottom));
+  overflow-y: auto;
   scroll-margin-top: 0;
 }
 .screen.is-active { display: flex; opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 .screen.is-leaving { opacity: 0; transform: translateY(-18px) scale(.985); filter: blur(2px); }
 
 .card {
-  width: min(94vw, 900px);
+  width: min(100%, 900px);
   border-radius: 1.3rem;
   background: var(--white-glass);
   border: 1px solid rgba(227, 200, 133, 0.5);
@@ -261,14 +262,17 @@ body {
 .h2 { left: 22%; top: 90%; animation: floatUp 17s linear infinite 2s; }
 
 .access-screen {
+  position: fixed;
+  inset: 0;
   width: 100%;
   min-height: 100vh;
   min-height: 100svh;
   min-height: 100dvh;
-  display: grid;
-  place-items: start center;
-  padding: 1rem;
-  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(32px, 7vh, 72px) 20px 28px;
+  overflow-y: auto;
   z-index: 2;
   opacity: 0;
   transform: translateY(18px);
@@ -286,7 +290,7 @@ body {
 }
 
 .access-card {
-  width: min(94vw, 620px);
+  width: min(100%, 620px);
   animation: zoomIn .72s ease both;
 }
 
