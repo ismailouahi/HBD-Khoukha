@@ -41,11 +41,12 @@ body {
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity .65s ease, transform .65s ease;
+  transform: translateY(24px) scale(.985);
+  filter: blur(2px);
+  transition: opacity .65s ease, transform .65s ease, filter .65s ease;
 }
-.screen.is-active { display: flex; opacity: 1; transform: translateY(0); }
-.screen.is-leaving { opacity: 0; transform: translateY(-18px); }
+.screen.is-active { display: flex; opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+.screen.is-leaving { opacity: 0; transform: translateY(-18px) scale(.985); filter: blur(2px); }
 
 .card {
   width: min(92vw, 820px);
@@ -84,6 +85,7 @@ body {
 
 .poem-frame {
   margin: 1rem auto 1.2rem;
+  width: min(100%, 740px);
   border-radius: 1rem;
   padding: .55rem;
   background: linear-gradient(165deg, #fffaf5, #f3e6da);
@@ -94,10 +96,11 @@ body {
 .poem-image {
   display: block;
   width: 100%;
-  max-width: 92vw;
+  max-width: 100%;
   max-height: 65svh;
   object-fit: contain;
   border-radius: .72rem;
+  margin: 0 auto;
 }
 
 .letter-line { opacity: 0; transform: translateY(10px); margin: .55rem 0; line-height: 1.75; }
@@ -187,7 +190,52 @@ body {
 .play-btn:hover { filter: brightness(1.08); }
 .play-btn:active { transform: scale(.96); }
 .play-label { margin: .5rem 0 0; font-weight: 600; color: #7a4256; }
+.play-hint { margin: .35rem 0 0; color: #9a6a7b; font-size: .93rem; }
 .final-note { margin-top: 1.2rem; color: #6a3d4f; font-weight: 500; }
+
+.final-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.final-card::before,
+.final-card::after {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  filter: blur(12px);
+  opacity: .35;
+  pointer-events: none;
+}
+
+.final-card::before {
+  top: -110px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(255, 195, 212, 0.85), transparent 72%);
+}
+
+.final-card::after {
+  right: -90px;
+  bottom: -120px;
+  background: radial-gradient(circle, rgba(240, 210, 143, 0.8), transparent 72%);
+}
+
+.screen-burst {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.screen-burst span {
+  position: absolute;
+  bottom: -10vh;
+  color: rgba(215, 118, 151, .78);
+  font-size: clamp(12px, 3.4vw, 24px);
+  animation: burstUp 2.8s ease-out forwards;
+}
 
 .progress {
   position: fixed;
@@ -227,6 +275,11 @@ body {
 @keyframes shine { to { background-position: 200% center; } }
 @keyframes zoomIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
 @keyframes lineIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes burstUp {
+  0% { transform: translateY(0) scale(.9) rotate(0deg); opacity: 0; }
+  12% { opacity: .85; }
+  100% { transform: translateY(-115vh) scale(1.25) rotate(26deg); opacity: 0; }
+}
 
 @media (min-width: 900px) {
   .poem-image { max-width: min(72vw, 700px); max-height: 70vh; }
