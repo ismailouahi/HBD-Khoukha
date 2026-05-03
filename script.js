@@ -19,6 +19,15 @@ const totalScreens = screens.length;
 let currentIndex = 0;
 let isTransitioning = false;
 
+function setActiveScreen(index) {
+  screens.forEach((screen, i) => {
+    const isTarget = i === index;
+    screen.classList.toggle('is-active', isTarget);
+    screen.classList.remove('is-leaving');
+    screen.hidden = !isTarget;
+  });
+}
+
 function startBackgroundMusic() {
   if (!bgMusic || !bgMusic.paused) return;
   bgMusic.play().catch(() => {
@@ -81,6 +90,9 @@ function unlockExperience() {
       passwordInput.blur();
     }
 
+    currentIndex = 0;
+    setActiveScreen(currentIndex);
+
     resetViewportToTop();
     updateIndicator();
     runScreenEffects(currentIndex);
@@ -88,7 +100,7 @@ function unlockExperience() {
 }
 
 function showScreen(nextIndex) {
-  if (isTransitioning || nextIndex === currentIndex || nextIndex >= totalScreens) return;
+  if (isTransitioning || nextIndex === currentIndex || nextIndex >= totalScreens || nextIndex < 0) return;
   isTransitioning = true;
 
   const current = screens[currentIndex];
@@ -97,13 +109,8 @@ function showScreen(nextIndex) {
   current.classList.add('is-leaving');
 
   setTimeout(() => {
-    current.classList.remove('is-active', 'is-leaving');
-    current.hidden = true;
-
-    next.hidden = false;
-    next.classList.add('is-active');
-
     currentIndex = nextIndex;
+    setActiveScreen(currentIndex);
     resetViewportToTop();
     updateIndicator();
     triggerDecorativeBurst();
