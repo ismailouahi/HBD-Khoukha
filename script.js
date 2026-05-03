@@ -8,6 +8,12 @@ const playBtn = document.getElementById('playBtn');
 const bgMusic = document.getElementById('bgMusic');
 const playHint = document.getElementById('playHint');
 const loveScreen = document.querySelector('[data-screen="4"]');
+const accessScreen = document.getElementById('accessScreen');
+const accessForm = document.getElementById('accessForm');
+const passwordInput = document.getElementById('passwordInput');
+const accessError = document.getElementById('accessError');
+const romanticApp = document.getElementById('romanticApp');
+const validPassword = '159';
 
 const totalScreens = screens.length;
 let currentIndex = 0;
@@ -46,6 +52,25 @@ function runScreenEffects(index) {
   if (index === 3) {
     revealLoveCards();
   }
+}
+
+function unlockExperience() {
+  if (!accessScreen || !romanticApp || !progressIndicator) return;
+  accessScreen.classList.add('is-leaving');
+
+  setTimeout(() => {
+    accessScreen.hidden = true;
+    romanticApp.hidden = false;
+    progressIndicator.hidden = false;
+
+    if (passwordInput) {
+      passwordInput.value = '';
+      passwordInput.blur();
+    }
+
+    updateIndicator();
+    runScreenEffects(currentIndex);
+  }, 420);
 }
 
 function showScreen(nextIndex) {
@@ -108,8 +133,28 @@ playBtn.addEventListener('click', () => {
 });
 
 window.addEventListener('load', () => {
-  updateIndicator();
-  runScreenEffects(0);
+  if (passwordInput) {
+    passwordInput.focus();
+  }
 });
 
 window.addEventListener('pointerdown', startBackgroundMusic, { once: true });
+
+if (accessForm) {
+  accessForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!passwordInput) return;
+
+    const value = passwordInput.value.trim();
+    if (value === validPassword) {
+      if (accessError) accessError.textContent = '';
+      unlockExperience();
+      startBackgroundMusic();
+      return;
+    }
+
+    if (accessError) {
+      accessError.textContent = 'Ce n’est pas encore la bonne clé.';
+    }
+  });
+}

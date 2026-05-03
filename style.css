@@ -258,6 +258,80 @@ body {
 .heart::before { content: "❤"; color: #e8a2b2; font-size: clamp(12px, 2.6vw, 22px); }
 .h1 { left: 8%; top: 74%; animation: floatUp 14s linear infinite; }
 .h2 { left: 22%; top: 90%; animation: floatUp 17s linear infinite 2s; }
+
+.access-screen {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .65s ease, transform .65s ease;
+}
+
+.access-screen.is-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.access-screen.is-leaving {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+
+.access-card {
+  width: min(94vw, 620px);
+  animation: zoomIn .72s ease both;
+}
+
+.access-hint {
+  margin: .2rem 0 1rem;
+  color: #8f5f6f;
+}
+
+.access-form {
+  display: grid;
+  gap: .9rem;
+  width: min(100%, 380px);
+  margin: 0 auto;
+}
+
+.password-input {
+  min-height: 50px;
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(227, 200, 133, 0.72);
+  background: rgba(255, 255, 255, 0.76);
+  padding: .8rem 1.1rem;
+  font-size: 1rem;
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  box-shadow: inset 0 1px 4px rgba(148, 102, 121, 0.12);
+  transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+}
+
+.password-input:focus {
+  border-color: rgba(214, 132, 152, 0.9);
+  box-shadow: 0 0 0 3px rgba(214, 132, 152, 0.2), inset 0 1px 4px rgba(148, 102, 121, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.access-btn {
+  width: 100%;
+}
+
+.access-error {
+  min-height: 1.3em;
+  margin: .9rem 0 0;
+  color: #a26f82;
+  font-size: .94rem;
+}
 .h3 { left: 84%; top: 82%; animation: floatUp 16s linear infinite 4s; }
 .h4 { left: 66%; top: 88%; animation: floatUp 13s linear infinite 1s; }
 .h5 { left: 42%; top: 86%; animation: floatUp 18s linear infinite 3s; }

@@ -20,7 +20,29 @@
       <span class="spark s5"></span><span class="spark s6"></span>
     </div>
 
-    <main class="app" aria-live="polite">
+    <section class="access-screen is-active" id="accessScreen" aria-label="Page d'accès">
+      <article class="card access-card">
+        <h1 class="title">Un message d’amour t’attend</h1>
+        <p class="text">Avant de le découvrir, il faut ouvrir la porte avec le bon mot de passe.</p>
+        <p class="access-hint">Indice : le même mot de passe que ta valise.</p>
+        <form id="accessForm" class="access-form" autocomplete="off">
+          <input
+            id="passwordInput"
+            class="password-input"
+            type="password"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            placeholder="Mot de passe"
+            aria-label="Mot de passe"
+            required
+          />
+          <button class="btn access-btn" type="submit">Entrer</button>
+        </form>
+        <p class="access-error" id="accessError" role="status" aria-live="polite"></p>
+      </article>
+    </section>
+
+    <main class="app" aria-live="polite" id="romanticApp" hidden>
       <section class="screen is-active" data-screen="1">
         <article class="card card-breathe">
           <h1 class="title shimmer">Happy Birthday, ma Khoukha</h1>
@@ -95,7 +117,7 @@
       </section>
     </main>
 
-    <p class="progress" id="progressIndicator">1/6</p>
+    <p class="progress" id="progressIndicator" hidden>1/6</p>
 
 
     <audio id="bgMusic" src="music_romance.mp3" loop preload="auto"></audio>
