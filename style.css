@@ -16,7 +16,7 @@ body {
   min-height: 100svh;
   min-height: 100dvh;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
   font-family: Inter, system-ui, sans-serif;
   color: var(--text);
   background: linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, var(--bg-3));
@@ -35,7 +35,9 @@ body {
   display: grid;
   place-items: start center;
   padding: 1rem;
-  position: relative;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
   z-index: 2;
 }
 
@@ -268,7 +270,9 @@ body {
   display: grid;
   place-items: start center;
   padding: 1rem;
-  position: relative;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
   z-index: 2;
   opacity: 0;
   transform: translateY(18px);
