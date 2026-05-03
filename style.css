@@ -107,6 +107,77 @@ body {
 .screen.is-active .letter-line:nth-of-type(3) { animation-delay: .4s; }
 .screen.is-active .letter-line:nth-of-type(4) { animation-delay: .55s; }
 
+.love-card { position: relative; overflow: hidden; }
+.love-card::before {
+  content: "";
+  position: absolute;
+  inset: -20% auto auto -25%;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(255, 216, 227, 0.65), transparent 70%);
+  filter: blur(2px);
+}
+.love-lines {
+  display: grid;
+  gap: .65rem;
+  margin: 1rem 0 1.2rem;
+  text-align: left;
+}
+.love-line {
+  margin: 0;
+  padding: .85rem .95rem;
+  border-radius: .9rem;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.65), rgba(255, 243, 248, 0.8));
+  border: 1px solid rgba(222, 158, 178, 0.5);
+  box-shadow: 0 8px 22px rgba(178, 109, 134, 0.14);
+  line-height: 1.65;
+  opacity: 0;
+  transform: translateY(8px);
+}
+.screen.is-active .love-line { animation: lineIn .7s ease forwards; }
+.screen.is-active .love-line:nth-child(1) { animation-delay: .08s; }
+.screen.is-active .love-line:nth-child(2) { animation-delay: .2s; }
+.screen.is-active .love-line:nth-child(3) { animation-delay: .32s; }
+.screen.is-active .love-line:nth-child(4) { animation-delay: .44s; }
+.screen.is-active .love-line:nth-child(5) { animation-delay: .56s; }
+
+.promise-card {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.42), rgba(255, 247, 236, 0.56));
+}
+.promise-letter {
+  margin: .8rem auto 1.15rem;
+  max-width: 56ch;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.55), rgba(255, 244, 227, 0.64));
+  border: 1px solid rgba(227, 200, 133, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 10px 26px rgba(130, 84, 53, 0.12);
+}
+.promise-line {
+  margin: .25rem 0;
+  line-height: 1.75;
+  opacity: 0;
+  transform: translateY(10px);
+}
+.signature {
+  margin: .9rem 0 0;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: clamp(1.15rem, 3.8vw, 1.45rem);
+  color: #8e5367;
+  opacity: 0;
+  transform: translateY(10px);
+}
+.screen.is-active .promise-line,
+.screen.is-active .signature { animation: lineIn .68s ease forwards; }
+.screen.is-active .promise-line:nth-child(1) { animation-delay: .08s; }
+.screen.is-active .promise-line:nth-child(2) { animation-delay: .2s; }
+.screen.is-active .promise-line:nth-child(3) { animation-delay: .32s; }
+.screen.is-active .promise-line:nth-child(4) { animation-delay: .44s; }
+.screen.is-active .promise-line:nth-child(5) { animation-delay: .56s; }
+.screen.is-active .promise-line:nth-child(6) { animation-delay: .68s; }
+.screen.is-active .signature { animation-delay: .82s; }
+
 .play-btn {
   width: 124px; height: 124px; border-radius: 50%; border: 0; margin-top: .5rem;
   background: radial-gradient(circle at 30% 30%, #ffe6ea, #d37891 70%, #b65a76);
@@ -160,6 +231,11 @@ body {
 @media (min-width: 900px) {
   .poem-image { max-width: min(72vw, 700px); max-height: 70vh; }
   .card { width: min(86vw, 880px); }
+}
+
+@media (max-width: 520px) {
+  .love-line { font-size: .95rem; }
+  .promise-letter { padding: .85rem .8rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
