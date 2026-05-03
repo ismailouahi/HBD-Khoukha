@@ -5,10 +5,19 @@ const screens = Array.from(document.querySelectorAll('.screen'));
 const nextButtons = Array.from(document.querySelectorAll('.next-btn'));
 const progressIndicator = document.getElementById('progressIndicator');
 const playBtn = document.getElementById('playBtn');
+const bgMusic = document.getElementById('bgMusic');
 
 const totalScreens = screens.length;
 let currentIndex = 0;
 let isTransitioning = false;
+
+
+function startBackgroundMusic() {
+  if (!bgMusic || !bgMusic.paused) return;
+  bgMusic.play().catch(() => {
+    // Le navigateur peut bloquer l'autoplay tant qu'il n'y a pas d'interaction utilisateur.
+  });
+}
 
 function updateIndicator() {
   progressIndicator.textContent = `${currentIndex + 1}/${totalScreens}`;
@@ -41,11 +50,13 @@ function showScreen(nextIndex) {
 
 nextButtons.forEach((btn) => {
   btn.addEventListener('click', () => {
+    startBackgroundMusic();
     showScreen(currentIndex + 1);
   });
 });
 
 playBtn.addEventListener('click', () => {
+  startBackgroundMusic();
   window.open(youtubeLink, '_blank', 'noopener,noreferrer');
 });
 
@@ -53,3 +64,5 @@ playBtn.addEventListener('click', () => {
 window.addEventListener('load', () => {
   updateIndicator();
 });
+
+window.addEventListener('pointerdown', startBackgroundMusic, { once: true });
