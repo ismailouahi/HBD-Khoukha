@@ -7,11 +7,11 @@ const progressIndicator = document.getElementById('progressIndicator');
 const playBtn = document.getElementById('playBtn');
 const bgMusic = document.getElementById('bgMusic');
 const playHint = document.getElementById('playHint');
+const loveScreen = document.querySelector('[data-screen="4"]');
 
 const totalScreens = screens.length;
 let currentIndex = 0;
 let isTransitioning = false;
-
 
 function startBackgroundMusic() {
   if (!bgMusic || !bgMusic.paused) return;
@@ -20,8 +20,32 @@ function startBackgroundMusic() {
   });
 }
 
+function stopBackgroundMusic() {
+  if (!bgMusic) return;
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+}
+
 function updateIndicator() {
   progressIndicator.textContent = `${currentIndex + 1}/${totalScreens}`;
+}
+
+function revealLoveCards() {
+  if (!loveScreen) return;
+  const cards = Array.from(loveScreen.querySelectorAll('.love-line'));
+  cards.forEach((card) => card.classList.remove('is-visible'));
+
+  cards.forEach((card, index) => {
+    setTimeout(() => {
+      card.classList.add('is-visible');
+    }, 240 + (index * 280));
+  });
+}
+
+function runScreenEffects(index) {
+  if (index === 3) {
+    revealLoveCards();
+  }
 }
 
 function showScreen(nextIndex) {
@@ -43,6 +67,7 @@ function showScreen(nextIndex) {
     currentIndex = nextIndex;
     updateIndicator();
     triggerDecorativeBurst();
+    runScreenEffects(currentIndex);
 
     setTimeout(() => {
       isTransitioning = false;
@@ -75,20 +100,16 @@ nextButtons.forEach((btn) => {
 });
 
 playBtn.addEventListener('click', () => {
-  startBackgroundMusic();
-  if (bgMusic) {
-    bgMusic.volume = 0.55;
-    bgMusic.play().catch(() => {});
-  }
+  stopBackgroundMusic();
   if (playHint) {
     playHint.textContent = 'Bonne écoute ma Khoukha ✨';
   }
   window.open(youtubeLink, '_blank', 'noopener,noreferrer');
 });
 
-// Animation de départ (premier écran déjà actif dans le HTML/CSS).
 window.addEventListener('load', () => {
   updateIndicator();
+  runScreenEffects(0);
 });
 
 window.addEventListener('pointerdown', startBackgroundMusic, { once: true });
