@@ -50,8 +50,6 @@ body {
   filter: blur(2px);
   transition: opacity .65s ease, transform .65s ease, filter .65s ease;
   padding: 1rem 0 5.5rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
   scroll-margin-top: 0;
 }
 .screen.is-active { display: flex; opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
