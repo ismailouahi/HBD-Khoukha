@@ -54,6 +54,13 @@ function runScreenEffects(index) {
   }
 }
 
+
+function resetViewportToTop() {
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
 function unlockExperience() {
   if (!accessScreen || !romanticApp || !progressIndicator) return;
   accessScreen.classList.add('is-leaving');
@@ -68,6 +75,7 @@ function unlockExperience() {
       passwordInput.blur();
     }
 
+    resetViewportToTop();
     updateIndicator();
     runScreenEffects(currentIndex);
   }, 420);
@@ -90,6 +98,7 @@ function showScreen(nextIndex) {
     next.classList.add('is-active');
 
     currentIndex = nextIndex;
+    resetViewportToTop();
     updateIndicator();
     triggerDecorativeBurst();
     runScreenEffects(currentIndex);
