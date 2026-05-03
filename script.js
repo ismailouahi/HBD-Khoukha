@@ -6,15 +6,16 @@ const nextButtons = Array.from(document.querySelectorAll('.next-btn'));
 const progressIndicator = document.getElementById('progressIndicator');
 const playBtn = document.getElementById('playBtn');
 
+const totalScreens = screens.length;
 let currentIndex = 0;
 let isTransitioning = false;
 
 function updateIndicator() {
-  progressIndicator.textContent = `${currentIndex + 1}/4`;
+  progressIndicator.textContent = `${currentIndex + 1}/${totalScreens}`;
 }
 
 function showScreen(nextIndex) {
-  if (isTransitioning || nextIndex === currentIndex || nextIndex >= screens.length) return;
+  if (isTransitioning || nextIndex === currentIndex || nextIndex >= totalScreens) return;
   isTransitioning = true;
 
   const current = screens[currentIndex];
