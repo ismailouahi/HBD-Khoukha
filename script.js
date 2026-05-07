@@ -21,6 +21,10 @@ const ACTIVE_WORDS = isCoarsePointer ? WORDS.slice(0, 6) : WORDS;
 const CLICK_COOLDOWN = isCoarsePointer ? 280 : 400;
 const FX_SCALE = isCoarsePointer ? 0.45 : 1;
 const DISABLE_WORD_BLUR = isCoarsePointer;
+const MAX_CRACKS = isCoarsePointer ? 18 : 34;
+const MAX_RIPPLES = isCoarsePointer ? 10 : 20;
+const MAX_SPARKLES = isCoarsePointer ? 90 : 180;
+const MAX_SHARDS = isCoarsePointer ? 55 : 110;
 
 let width = innerWidth, height = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
 let radius = 150, center = { x: 0, y: 0 };
@@ -77,7 +81,8 @@ function resize() {
   sphereCanvas.width = Math.floor(700 * dpr); sphereCanvas.height = Math.floor(700 * dpr);
   sphereCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   setupWords();
-  bgDust = Array.from({ length: reduced ? 24 : 52 }, () => ({ x: Math.random() * width, y: Math.random() * height, r: Math.random() * 1.9 + 0.2, v: Math.random() * 0.12 + 0.03, a: Math.random() * 0.38 + 0.08 }));
+  const dustCount = reduced ? 24 : (isCoarsePointer ? 28 : 52);
+  bgDust = Array.from({ length: dustCount }, () => ({ x: Math.random() * width, y: Math.random() * height, r: Math.random() * 1.9 + 0.2, v: Math.random() * 0.12 + 0.03, a: Math.random() * 0.38 + 0.08 }));
 }
 
 function drawSphere(t) {
@@ -164,7 +169,9 @@ function addCrack(hitX, hitY) {
   spawn(hitX, hitY, dir, mainSteps, 0.28, 0.7 + depth * 0.6);
   for (let i = 0; i < branches; i++) spawn(hitX, hitY, dir + (Math.random() - 0.5) * 1.8, 4 + Math.random() * mainSteps * 0.7, 0.45, 0.45 + depth * 0.35);
   cracks.push({ lines, intensity: 0.4 + depth * 0.6 });
+  if (cracks.length > MAX_CRACKS) cracks.splice(0, cracks.length - MAX_CRACKS);
 }
+
 
 function breakNextWord() {
   const alive = words.filter(w => !w.broken); if (!alive.length) return;
@@ -176,6 +183,8 @@ function breakNextWord() {
   const shardBurst = Math.max(5, Math.round(14 * FX_SCALE));
   for (let i = 0; i < sparkleBurst; i++) sparkles.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 1.8, vy: Math.random() * 1.5 + 0.2, a: 0.7, s: Math.random() * 2 + 1, gold: Math.random() > 0.45 });
   for (let i = 0; i < shardBurst; i++) shards.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 2.6, vy: (Math.random() - 0.4) * 2.4, rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.32, a: 0.75, size: Math.random() * 2.2 + 1.8 });
+  if (sparkles.length > MAX_SPARKLES) sparkles.splice(0, sparkles.length - MAX_SPARKLES);
+  if (shards.length > MAX_SHARDS) shards.splice(0, shards.length - MAX_SHARDS);
   brokenCount++;
 }
 
@@ -236,6 +245,7 @@ function updateParticles(dt) {
 }
 
 function drawBackground(dt) {
+  if (!bgDust.length) return;
   bgCtx.clearRect(0, 0, width, height);
   bgDust.forEach(p => {
     p.y += p.v * dt; if (p.y > height + 5) { p.y = -4; p.x = Math.random() * width; }
@@ -265,10 +275,13 @@ function onSpherePointer(ev) {
   const map = 700 / rect.width;
   addCrack(x, y); breakNextWord();
   ripples.push({ x: x * map + 350, y: y * map + 350, radius: 10, a: 0.55 });
+  if (ripples.length > MAX_RIPPLES) ripples.splice(0, ripples.length - MAX_RIPPLES);
   const clickSparkleCount = Math.max(6, Math.round(16 * FX_SCALE));
   for (let i = 0; i < clickSparkleCount; i++) {
     sparkles.push({ x: x * map + 350, y: y * map + 350, vx: (Math.random() - .5) * 2.8, vy: (Math.random() - .2) * 2.2, a: .8, s: Math.random() * 1.8 + .6, gold: Math.random() > .35 });
   }
+  if (sparkles.length > MAX_SPARKLES) sparkles.splice(0, sparkles.length - MAX_SPARKLES);
+  if (shards.length > MAX_SHARDS) shards.splice(0, shards.length - MAX_SHARDS);
   shakeTimer = reduced ? 0 : 140;
   ambientDim = Math.min(0.86, brokenCount / ACTIVE_WORDS.length * 0.9);
   document.documentElement.style.setProperty("--scene-dim", ambientDim.toFixed(3));
