@@ -1,4 +1,4 @@
-const PASSWORD = "13011990";
+const PASSWORD = "1301";
 const WORDS = ["confiance", "bonheur", "sécurité", "douceur", "sérénité", "amour", "paix", "tendresse", "sincérité", "légèreté"];
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -297,7 +297,15 @@ function triggerFinalBreak() {
 }
 
 function checkPassword() {
-  if (input.value.trim() === PASSWORD) {
+  const value = input.value.trim();
+
+  if (!/^\d{4}$/.test(value)) {
+    gateError.textContent = "Entre exactement 4 chiffres.";
+    input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake");
+    return;
+  }
+
+  if (value === PASSWORD) {
     gate.classList.add("fade-out");
     setTimeout(() => {
       gate.classList.add("hidden");
@@ -321,6 +329,11 @@ function startEnding() {
   }, reduced ? 300 : (isCoarsePointer ? 700 : 1200));
 }
 
+
+input.addEventListener("input", () => {
+  input.value = input.value.replace(/\D/g, "").slice(0, 4);
+  if (gateError.textContent) gateError.textContent = "";
+});
 enterBtn.addEventListener("click", checkPassword);
 input.addEventListener("keydown", (e) => { if (e.key === "Enter") checkPassword(); });
 window.addEventListener("resize", resize);

@@ -22,7 +22,8 @@
           <h1 id="gate-title">Avant d’entrer…</h1>
           <p class="gate-sub">Certaines choses ne s’ouvrent qu’avec un souvenir.</p>
           <label for="password" class="sr-only">Mot de passe</label>
-          <input id="password" type="password" placeholder="Écris le mot de passe" autocomplete="off" inputmode="numeric" />
+          <input id="password" type="password" placeholder="Code à 4 chiffres" autocomplete="off" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" aria-describedby="password-format" />
+          <p id="password-format" class="hint">Format : 4 chiffres.</p>
           <p class="hint">Indice : une date que le cœur n’oublie pas.</p>
           <button id="enter-btn" type="button">Entrer</button>
           <p id="gate-error" class="error" role="status" aria-live="polite"></p>
