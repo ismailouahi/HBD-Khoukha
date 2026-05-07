@@ -18,7 +18,9 @@ const wordLayer = document.getElementById("word-layer");
 const cursor = document.getElementById("cursor");
 
 const ACTIVE_WORDS = isCoarsePointer ? WORDS.slice(0, 6) : WORDS;
-const CLICK_COOLDOWN = isCoarsePointer ? 260 : 400;
+const CLICK_COOLDOWN = isCoarsePointer ? 280 : 400;
+const FX_SCALE = isCoarsePointer ? 0.45 : 1;
+const DISABLE_WORD_BLUR = isCoarsePointer;
 
 let width = innerWidth, height = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
 let radius = 150, center = { x: 0, y: 0 };
@@ -47,7 +49,7 @@ function setupWords() {
 }
 
 function shatterWordVisual(target) {
-  const count = Math.min(16, Math.max(10, target.text.length + 3));
+  const count = Math.round(Math.min(16, Math.max(10, target.text.length + 3)) * FX_SCALE);
   for (let i = 0; i < count; i++) {
     const crumb = document.createElement("span");
     crumb.className = "word-crumb";
@@ -170,17 +172,19 @@ function breakNextWord() {
   shatterWordVisual(target);
   const shardX = (target.x - center.x) * (700 / (radius * 2)) + 350;
   const shardY = (target.y - center.y) * (700 / (radius * 2)) + 350;
-  for (let i = 0; i < 22; i++) sparkles.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 1.8, vy: Math.random() * 1.5 + 0.2, a: 0.7, s: Math.random() * 2 + 1, gold: Math.random() > 0.45 });
-  for (let i = 0; i < 14; i++) shards.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 2.6, vy: (Math.random() - 0.4) * 2.4, rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.32, a: 0.75, size: Math.random() * 2.2 + 1.8 });
+  const sparkleBurst = Math.max(8, Math.round(22 * FX_SCALE));
+  const shardBurst = Math.max(5, Math.round(14 * FX_SCALE));
+  for (let i = 0; i < sparkleBurst; i++) sparkles.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 1.8, vy: Math.random() * 1.5 + 0.2, a: 0.7, s: Math.random() * 2 + 1, gold: Math.random() > 0.45 });
+  for (let i = 0; i < shardBurst; i++) shards.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 2.6, vy: (Math.random() - 0.4) * 2.4, rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.32, a: 0.75, size: Math.random() * 2.2 + 1.8 });
   brokenCount++;
 }
 
-function updateWords(dt) {
+function updateWords(dt, now) {
   const remain = Math.max(1, ACTIVE_WORDS.length - brokenCount);
   words.forEach((w) => {
     if (w.broken) return;
     const instability = (brokenCount / ACTIVE_WORDS.length) * 0.005;
-    w.angle += (w.speed + instability + Math.sin(w.phase + performance.now() * 0.001) * 0.0009) * dt;
+    w.angle += (w.speed + instability + Math.sin(w.phase + now * 0.001) * 0.0009) * dt;
     const z = Math.sin(w.angle + w.phase);
     const x = center.x + Math.cos(w.angle) * w.orbitX;
     const y = center.y + Math.sin(w.angle) * w.orbitY * 0.75;
@@ -190,7 +194,11 @@ function updateWords(dt) {
     w.el.style.left = `${x}px`; w.el.style.top = `${y}px`;
     w.el.style.opacity = alpha.toFixed(3);
     w.el.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(3)})`;
-    w.el.style.filter = `blur(${(1 - (z + 1) / 2) * 2.2}px)`;
+    if (!DISABLE_WORD_BLUR) {
+      w.el.style.filter = `blur(${(1 - (z + 1) / 2) * 2.2}px)`;
+    } else if (w.el.style.filter) {
+      w.el.style.filter = "";
+    }
     w.el.style.zIndex = `${Math.floor(scale * 100)}`;
   });
   if (remain === 0 && !endingStarted && !finalClickArmed) {
@@ -202,9 +210,28 @@ function updateWords(dt) {
 }
 
 function updateParticles(dt) {
-  sparkles = sparkles.filter(s => (s.a -= 0.016 * dt) > 0).map(s => ({ ...s, x: s.x + (s.vx || 0), y: s.y + (s.vy || 0.3) }));
-  ripples = ripples.filter(r => (r.a -= 0.018 * dt) > 0).map(r => ({ ...r, radius: r.radius + 2.2 * dt }));
-  shards = shards.filter(f => (f.a -= 0.024 * dt) > 0).map(f => ({ ...f, x: f.x + f.vx * dt, y: f.y + f.vy * dt, vy: f.vy + 0.04 * dt, rot: f.rot + f.vr * dt }));
+  for (let i = sparkles.length - 1; i >= 0; i--) {
+    const s = sparkles[i];
+    s.a -= 0.016 * dt;
+    if (s.a <= 0) { sparkles.splice(i, 1); continue; }
+    s.x += s.vx || 0;
+    s.y += s.vy || 0.3;
+  }
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    const r = ripples[i];
+    r.a -= 0.018 * dt;
+    if (r.a <= 0) { ripples.splice(i, 1); continue; }
+    r.radius += 2.2 * dt;
+  }
+  for (let i = shards.length - 1; i >= 0; i--) {
+    const f = shards[i];
+    f.a -= 0.024 * dt;
+    if (f.a <= 0) { shards.splice(i, 1); continue; }
+    f.x += f.vx * dt;
+    f.y += f.vy * dt;
+    f.vy += 0.04 * dt;
+    f.rot += f.vr * dt;
+  }
   if (shakeTimer > 0) shakeTimer -= 16 * dt;
 }
 
@@ -219,7 +246,7 @@ function drawBackground(dt) {
 
 function animate(now) {
   const dt = Math.min((now - lastTime) / 16.666, 2); lastTime = now;
-  drawBackground(dt); updateWords(dt); updateParticles(dt); drawSphere(now);
+  drawBackground(dt); updateWords(dt, now); updateParticles(dt); drawSphere(now);
   requestAnimationFrame(animate);
 }
 
@@ -238,7 +265,10 @@ function onSpherePointer(ev) {
   const map = 700 / rect.width;
   addCrack(x, y); breakNextWord();
   ripples.push({ x: x * map + 350, y: y * map + 350, radius: 10, a: 0.55 });
-  sparkles.push(...Array.from({ length: 16 }, () => ({ x: x * map + 350, y: y * map + 350, vx: (Math.random() - .5) * 2.8, vy: (Math.random() - .2) * 2.2, a: .8, s: Math.random() * 1.8 + .6, gold: Math.random() > .35 })));
+  const clickSparkleCount = Math.max(6, Math.round(16 * FX_SCALE));
+  for (let i = 0; i < clickSparkleCount; i++) {
+    sparkles.push({ x: x * map + 350, y: y * map + 350, vx: (Math.random() - .5) * 2.8, vy: (Math.random() - .2) * 2.2, a: .8, s: Math.random() * 1.8 + .6, gold: Math.random() > .35 });
+  }
   shakeTimer = reduced ? 0 : 140;
   ambientDim = Math.min(0.86, brokenCount / ACTIVE_WORDS.length * 0.9);
   document.documentElement.style.setProperty("--scene-dim", ambientDim.toFixed(3));
