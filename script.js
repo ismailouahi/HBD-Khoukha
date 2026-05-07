@@ -18,7 +18,7 @@ const cursor = document.getElementById("cursor");
 
 let width = innerWidth, height = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
 let radius = 150, center = { x: 0, y: 0 };
-let words = [], cracks = [], ripples = [], sparkles = [], bgDust = [];
+let words = [], cracks = [], ripples = [], sparkles = [], shards = [], bgDust = [];
 let brokenCount = 0, cooldownUntil = 0, endingStarted = false, finalClickArmed = false;
 let ambientDim = 0, shakeTimer = 0, lastTime = performance.now();
 
@@ -33,7 +33,7 @@ function setupWords() {
     return {
       text, el, broken: false,
       angle: (i / WORDS.length) * Math.PI * 2,
-      speed: (mobile ? 0.04 : 0.03) * (Math.random() * 0.45 + 0.75),
+      speed: (mobile ? 0.011 : 0.0085) * (Math.random() * 0.4 + 0.7),
       orbitX: radius + (mobile ? 58 : 86) + Math.random() * (mobile ? 45 : 70),
       orbitY: radius * 0.55 + Math.random() * (mobile ? 36 : 56),
       phase: Math.random() * Math.PI * 2,
@@ -48,7 +48,7 @@ function resize() {
   bgCanvas.style.width = `${width}px`; bgCanvas.style.height = `${height}px`;
   bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   center = { x: width / 2, y: height / 2 };
-  const sphereSize = Math.max(230, Math.min(width * 0.3, 390));
+  const sphereSize = Math.max(255, Math.min(width * 0.34, 430));
   sphereWrap.style.width = `${sphereSize}px`;
   radius = sphereSize / 2;
   sphereCanvas.width = Math.floor(700 * dpr); sphereCanvas.height = Math.floor(700 * dpr);
@@ -85,7 +85,7 @@ function drawSphere(t) {
   sphereCtx.fillStyle = `rgba(223,185,116,${0.2 - ambientDim * 0.12})`; sphereCtx.beginPath(); sphereCtx.arc(0, r * 0.66, r * 0.16, 0, Math.PI * 2); sphereCtx.fill();
 
   sphereCtx.save(); sphereCtx.beginPath(); sphereCtx.arc(0, 0, r, 0, Math.PI * 2); sphereCtx.clip();
-  drawCracks(r); drawRipples(); drawSparkles(); sphereCtx.restore();
+  drawCracks(r); drawRipples(); drawSparkles(); drawShards(); sphereCtx.restore();
   sphereCtx.restore();
 }
 
@@ -106,6 +106,21 @@ function drawCracks(r) {
 
 function drawRipples() { ripples.forEach(r => { sphereCtx.strokeStyle = `rgba(248,242,230,${r.a})`; sphereCtx.lineWidth = 1; sphereCtx.beginPath(); sphereCtx.arc(r.x, r.y, r.radius, 0, Math.PI * 2); sphereCtx.stroke(); }); }
 function drawSparkles() { sparkles.forEach(s => { sphereCtx.fillStyle = `rgba(${s.gold ? "218,188,132" : "255,255,255"},${s.a})`; sphereCtx.fillRect(s.x, s.y, s.s, s.s); }); }
+function drawShards() {
+  shards.forEach((f) => {
+    sphereCtx.save();
+    sphereCtx.translate(f.x, f.y);
+    sphereCtx.rotate(f.rot);
+    sphereCtx.fillStyle = `rgba(237,228,208,${f.a})`;
+    sphereCtx.beginPath();
+    sphereCtx.moveTo(0, -f.size);
+    sphereCtx.lineTo(f.size * 0.75, f.size * 0.5);
+    sphereCtx.lineTo(-f.size * 0.85, f.size * 0.45);
+    sphereCtx.closePath();
+    sphereCtx.fill();
+    sphereCtx.restore();
+  });
+}
 
 function addCrack(hitX, hitY) {
   const depth = brokenCount / WORDS.length;
@@ -132,7 +147,10 @@ function addCrack(hitX, hitY) {
 function breakNextWord() {
   const alive = words.filter(w => !w.broken); if (!alive.length) return;
   const target = alive[Math.floor(Math.random() * alive.length)]; target.broken = true; target.el.classList.add("broken");
-  for (let i = 0; i < 22; i++) sparkles.push({ x: (target.x - center.x) * (700 / (radius * 2)) + 350, y: (target.y - center.y) * (700 / (radius * 2)) + 350, vx: (Math.random() - 0.5) * 1.8, vy: Math.random() * 1.5 + 0.2, a: 0.7, s: Math.random() * 2 + 1, gold: Math.random() > 0.45 });
+  const shardX = (target.x - center.x) * (700 / (radius * 2)) + 350;
+  const shardY = (target.y - center.y) * (700 / (radius * 2)) + 350;
+  for (let i = 0; i < 22; i++) sparkles.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 1.8, vy: Math.random() * 1.5 + 0.2, a: 0.7, s: Math.random() * 2 + 1, gold: Math.random() > 0.45 });
+  for (let i = 0; i < 14; i++) shards.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 2.6, vy: (Math.random() - 0.4) * 2.4, rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.32, a: 0.75, size: Math.random() * 2.2 + 1.8 });
   brokenCount++;
 }
 
@@ -154,12 +172,18 @@ function updateWords(dt) {
     w.el.style.filter = `blur(${(1 - (z + 1) / 2) * 2.2}px)`;
     w.el.style.zIndex = `${Math.floor(scale * 100)}`;
   });
-  if (remain === 0 && !endingStarted) finalClickArmed = true;
+  if (remain === 0 && !endingStarted && !finalClickArmed) {
+    finalClickArmed = true;
+    setTimeout(() => {
+      if (!endingStarted && finalClickArmed) startEnding();
+    }, reduced ? 200 : 850);
+  }
 }
 
 function updateParticles(dt) {
   sparkles = sparkles.filter(s => (s.a -= 0.016 * dt) > 0).map(s => ({ ...s, x: s.x + (s.vx || 0), y: s.y + (s.vy || 0.3) }));
   ripples = ripples.filter(r => (r.a -= 0.018 * dt) > 0).map(r => ({ ...r, radius: r.radius + 2.2 * dt }));
+  shards = shards.filter(f => (f.a -= 0.024 * dt) > 0).map(f => ({ ...f, x: f.x + f.vx * dt, y: f.y + f.vy * dt, vy: f.vy + 0.04 * dt, rot: f.rot + f.vr * dt }));
   if (shakeTimer > 0) shakeTimer -= 16 * dt;
 }
 
