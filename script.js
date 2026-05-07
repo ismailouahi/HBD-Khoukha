@@ -33,13 +33,30 @@ function setupWords() {
     return {
       text, el, broken: false,
       angle: (i / WORDS.length) * Math.PI * 2,
-      speed: (mobile ? 0.011 : 0.0085) * (Math.random() * 0.4 + 0.7),
+      speed: (mobile ? 0.0044 : 0.0036) * (Math.random() * 0.32 + 0.84),
       orbitX: radius + (mobile ? 58 : 86) + Math.random() * (mobile ? 45 : 70),
       orbitY: radius * 0.55 + Math.random() * (mobile ? 36 : 56),
       phase: Math.random() * Math.PI * 2,
       wobble: 0
     };
   });
+}
+
+function shatterWordVisual(target) {
+  const count = Math.min(16, Math.max(10, target.text.length + 3));
+  for (let i = 0; i < count; i++) {
+    const crumb = document.createElement("span");
+    crumb.className = "word-crumb";
+    crumb.textContent = target.text[Math.floor(Math.random() * target.text.length)] || "•";
+    crumb.style.left = `${target.x}px`;
+    crumb.style.top = `${target.y}px`;
+    crumb.style.setProperty("--dx", `${(Math.random() - 0.5) * 140}px`);
+    crumb.style.setProperty("--dy", `${(Math.random() - 0.5) * 90 - 22}px`);
+    crumb.style.setProperty("--rot", `${(Math.random() - 0.5) * 180}deg`);
+    crumb.style.setProperty("--delay", `${Math.random() * 120}ms`);
+    wordLayer.appendChild(crumb);
+    crumb.addEventListener("animationend", () => crumb.remove(), { once: true });
+  }
 }
 
 function resize() {
@@ -147,6 +164,7 @@ function addCrack(hitX, hitY) {
 function breakNextWord() {
   const alive = words.filter(w => !w.broken); if (!alive.length) return;
   const target = alive[Math.floor(Math.random() * alive.length)]; target.broken = true; target.el.classList.add("broken");
+  shatterWordVisual(target);
   const shardX = (target.x - center.x) * (700 / (radius * 2)) + 350;
   const shardY = (target.y - center.y) * (700 / (radius * 2)) + 350;
   for (let i = 0; i < 22; i++) sparkles.push({ x: shardX, y: shardY, vx: (Math.random() - 0.5) * 1.8, vy: Math.random() * 1.5 + 0.2, a: 0.7, s: Math.random() * 2 + 1, gold: Math.random() > 0.45 });
@@ -158,8 +176,8 @@ function updateWords(dt) {
   const remain = Math.max(1, WORDS.length - brokenCount);
   words.forEach((w) => {
     if (w.broken) return;
-    const instability = (brokenCount / WORDS.length) * 0.04;
-    w.angle += (w.speed + instability + Math.sin(w.phase + performance.now() * 0.001) * 0.003) * dt;
+    const instability = (brokenCount / WORDS.length) * 0.005;
+    w.angle += (w.speed + instability + Math.sin(w.phase + performance.now() * 0.001) * 0.0009) * dt;
     const z = Math.sin(w.angle + w.phase);
     const x = center.x + Math.cos(w.angle) * w.orbitX;
     const y = center.y + Math.sin(w.angle) * w.orbitY * 0.75;
