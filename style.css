@@ -78,7 +78,29 @@ body {
   text-shadow: 0 0 10px rgba(185,200,255,.22); white-space: nowrap;
   transition: opacity 700ms ease, transform 700ms ease, filter 700ms ease;
 }
-.word.broken { opacity: 0 !important; transform: translate(-50%, -50%) scale(.6) !important; filter: blur(6px) !important; }
+.word.broken {
+  animation: word-crumble 1000ms cubic-bezier(.17,.67,.2,1) forwards;
+}
+@keyframes word-crumble {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); filter: blur(0); }
+  45% { opacity: .9; transform: translate(-50%, -50%) scale(1.03) rotate(-2deg); filter: blur(.4px); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(.5) rotate(8deg); filter: blur(7px); }
+}
+.word-crumb {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: rgba(236,240,255,.9);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(.58rem, 1.2vw, .9rem);
+  text-shadow: 0 0 8px rgba(185,200,255,.18);
+  pointer-events: none;
+  animation: crumb-fall 880ms ease-out forwards;
+  animation-delay: var(--delay, 0ms);
+}
+@keyframes crumb-fall {
+  0% { opacity: .95; transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(.3); }
+}
 .overlay-dark {
   position:absolute; inset:0; pointer-events:none; z-index:4;
   background: rgba(0,0,0, calc(var(--scene-dim) * 0.7)); transition: background 350ms linear;
