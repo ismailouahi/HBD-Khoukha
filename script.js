@@ -1,5 +1,5 @@
 const PASSWORD = "13011990";
-const WORDS = ["confiance", "bonheur", "sécurité", "douceur", "sérénité", "amour", "paix", "tendresse", "sincérité", "légèreté", "espoir", "innocence", "respect", "joie", "présence", "promesse", "calme", "refuge"];
+const WORDS = ["confiance", "bonheur", "sécurité", "douceur", "sérénité", "amour", "paix", "tendresse", "sincérité", "légèreté"];
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const gate = document.getElementById("gate");
@@ -19,7 +19,7 @@ const cursor = document.getElementById("cursor");
 let width = innerWidth, height = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
 let radius = 150, center = { x: 0, y: 0 };
 let words = [], cracks = [], ripples = [], sparkles = [], bgDust = [];
-let brokenCount = 0, cooldownUntil = 0, endingStarted = false;
+let brokenCount = 0, cooldownUntil = 0, endingStarted = false, finalClickArmed = false;
 let ambientDim = 0, shakeTimer = 0, lastTime = performance.now();
 
 function setupWords() {
@@ -33,7 +33,7 @@ function setupWords() {
     return {
       text, el, broken: false,
       angle: (i / WORDS.length) * Math.PI * 2,
-      speed: (mobile ? 0.1 : 0.08) * (Math.random() * 0.55 + 0.8),
+      speed: (mobile ? 0.04 : 0.03) * (Math.random() * 0.45 + 0.75),
       orbitX: radius + (mobile ? 58 : 86) + Math.random() * (mobile ? 45 : 70),
       orbitY: radius * 0.55 + Math.random() * (mobile ? 36 : 56),
       phase: Math.random() * Math.PI * 2,
@@ -48,7 +48,7 @@ function resize() {
   bgCanvas.style.width = `${width}px`; bgCanvas.style.height = `${height}px`;
   bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   center = { x: width / 2, y: height / 2 };
-  const sphereSize = Math.max(190, Math.min(width * 0.24, 330));
+  const sphereSize = Math.max(230, Math.min(width * 0.3, 390));
   sphereWrap.style.width = `${sphereSize}px`;
   radius = sphereSize / 2;
   sphereCanvas.width = Math.floor(700 * dpr); sphereCanvas.height = Math.floor(700 * dpr);
@@ -154,7 +154,7 @@ function updateWords(dt) {
     w.el.style.filter = `blur(${(1 - (z + 1) / 2) * 2.2}px)`;
     w.el.style.zIndex = `${Math.floor(scale * 100)}`;
   });
-  if (remain === 0 && !endingStarted) startEnding();
+  if (remain === 0 && !endingStarted) finalClickArmed = true;
 }
 
 function updateParticles(dt) {
@@ -180,6 +180,11 @@ function animate(now) {
 
 function onSpherePointer(ev) {
   if (endingStarted || performance.now() < cooldownUntil) return;
+  if (finalClickArmed) {
+    finalClickArmed = false;
+    startEnding();
+    return;
+  }
   const rect = sphereWrap.getBoundingClientRect();
   const x = ev.clientX - rect.left - rect.width / 2;
   const y = ev.clientY - rect.top - rect.height / 2;
