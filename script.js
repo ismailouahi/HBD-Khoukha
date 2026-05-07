@@ -213,8 +213,11 @@ function updateWords(dt, now) {
   if (remain === 0 && !endingStarted && !finalClickArmed) {
     finalClickArmed = true;
     setTimeout(() => {
-      if (!endingStarted && finalClickArmed) startEnding();
-    }, reduced ? 200 : (isCoarsePointer ? 350 : 850));
+      if (!endingStarted && finalClickArmed) {
+        finalClickArmed = false;
+        triggerFinalBreak();
+      }
+    }, reduced ? 220 : (isCoarsePointer ? 520 : 980));
   }
 }
 
@@ -262,11 +265,6 @@ function animate(now) {
 
 function onSpherePointer(ev) {
   if (endingStarted || performance.now() < cooldownUntil) return;
-  if (finalClickArmed) {
-    finalClickArmed = false;
-    startEnding();
-    return;
-  }
   const rect = sphereWrap.getBoundingClientRect();
   const x = ev.clientX - rect.left - rect.width / 2;
   const y = ev.clientY - rect.top - rect.height / 2;
@@ -288,6 +286,16 @@ function onSpherePointer(ev) {
   document.documentElement.style.setProperty("--halo-opacity", `${Math.max(0, 0.95 - ambientDim * 1.1)}`);
 }
 
+function triggerFinalBreak() {
+  endingStarted = true;
+  sphereWrap.removeEventListener("pointerdown", onSpherePointer);
+  sphereWrap.classList.add("final-shatter");
+  ambientDim = 0.94;
+  document.documentElement.style.setProperty("--scene-dim", ambientDim.toFixed(3));
+  document.documentElement.style.setProperty("--halo-opacity", "0");
+  setTimeout(startEnding, reduced ? 320 : (isCoarsePointer ? 750 : 1400));
+}
+
 function checkPassword() {
   if (input.value.trim() === PASSWORD) {
     gate.classList.add("fade-out");
@@ -304,7 +312,6 @@ function checkPassword() {
 
 function startEnding() {
   endingStarted = true;
-  sphereWrap.removeEventListener("pointerdown", onSpherePointer);
   setTimeout(() => {
     scene.classList.add("hidden"); ending.classList.remove("hidden");
     const l1 = document.getElementById("line-1"), l2 = document.getElementById("line-2"), l3 = document.getElementById("line-3");
