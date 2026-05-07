@@ -65,6 +65,14 @@ body {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: clamp(255px, 34vw, 430px); aspect-ratio: 1; z-index: 3;
 }
+.sphere-wrap.final-shatter {
+  animation: final-shatter 1300ms cubic-bezier(.22,.6,.18,1) forwards;
+}
+@keyframes final-shatter {
+  0% { opacity: 1; filter: blur(0); transform: translate(-50%, -50%) scale(1); }
+  40% { opacity: .9; filter: blur(1.4px); transform: translate(-50%, -50%) scale(1.035); }
+  100% { opacity: 0; filter: blur(10px); transform: translate(-50%, -50%) scale(.72); }
+}
 #sphere-canvas { width: 100%; height: 100%; filter: brightness(calc(1 - var(--scene-dim)*0.4)); }
 .halo {
   position: absolute; inset: -32%; border-radius: 50%; pointer-events: none;
@@ -113,11 +121,12 @@ body {
 .line {
   opacity: 0; margin: 0 0 1.2rem; filter: blur(9px);
   transform: translateY(8px); font-family: "Cormorant Garamond", serif;
-  color: #f0f2fb; font-size: clamp(1.4rem, 3.1vw, 2.35rem);
-  transition: opacity 1.5s ease, filter 1.5s ease, transform 1.5s ease;
+  color: #f3f5ff; text-shadow: 0 0 14px rgba(255, 255, 255, .09);
+  font-size: clamp(1.4rem, 3.1vw, 2.35rem);
+  transition: opacity 2.6s ease, filter 2.6s ease, transform 2.6s ease;
 }
 .line.show { opacity: .96; filter: blur(0); transform: translateY(0); }
-.line.final { color: #dbc590; }
+.line.final { color: #d8c595; text-shadow: 0 0 12px rgba(216, 197, 149, .12); }
 
 .cursor {
   position: fixed; width: 16px; height: 16px; border: 1px solid rgba(219,197,144,.75);
