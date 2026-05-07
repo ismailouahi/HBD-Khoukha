@@ -186,10 +186,19 @@ function breakNextWord() {
   if (sparkles.length > MAX_SPARKLES) sparkles.splice(0, sparkles.length - MAX_SPARKLES);
   if (shards.length > MAX_SHARDS) shards.splice(0, shards.length - MAX_SHARDS);
   brokenCount++;
+
+  if (brokenCount >= ACTIVE_WORDS.length && !endingStarted && !finalClickArmed) {
+    finalClickArmed = true;
+    setTimeout(() => {
+      if (!endingStarted && finalClickArmed) {
+        finalClickArmed = false;
+        triggerFinalBreak();
+      }
+    }, reduced ? 220 : (isCoarsePointer ? 520 : 980));
+  }
 }
 
 function updateWords(dt, now) {
-  const remain = Math.max(1, ACTIVE_WORDS.length - brokenCount);
   words.forEach((w) => {
     if (w.broken) return;
     const instability = (brokenCount / ACTIVE_WORDS.length) * 0.005;
@@ -210,15 +219,6 @@ function updateWords(dt, now) {
     }
     w.el.style.zIndex = `${Math.floor(scale * 100)}`;
   });
-  if (remain === 0 && !endingStarted && !finalClickArmed) {
-    finalClickArmed = true;
-    setTimeout(() => {
-      if (!endingStarted && finalClickArmed) {
-        finalClickArmed = false;
-        triggerFinalBreak();
-      }
-    }, reduced ? 220 : (isCoarsePointer ? 520 : 980));
-  }
 }
 
 function updateParticles(dt) {
