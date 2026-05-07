@@ -2,6 +2,7 @@ const PASSWORD = "13011990";
 const WORDS = ["confiance", "bonheur", "sécurité", "douceur", "sérénité", "amour", "paix", "tendresse", "sincérité", "légèreté"];
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isCoarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 const gate = document.getElementById("gate");
 const scene = document.getElementById("scene");
 const ending = document.getElementById("ending");
@@ -16,6 +17,9 @@ const bgCtx = bgCanvas.getContext("2d");
 const wordLayer = document.getElementById("word-layer");
 const cursor = document.getElementById("cursor");
 
+const ACTIVE_WORDS = isCoarsePointer ? WORDS.slice(0, 6) : WORDS;
+const CLICK_COOLDOWN = isCoarsePointer ? 260 : 400;
+
 let width = innerWidth, height = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
 let radius = 150, center = { x: 0, y: 0 };
 let words = [], cracks = [], ripples = [], sparkles = [], shards = [], bgDust = [];
@@ -25,14 +29,14 @@ let ambientDim = 0, shakeTimer = 0, lastTime = performance.now();
 function setupWords() {
   wordLayer.innerHTML = "";
   const mobile = matchMedia("(max-width: 700px)").matches;
-  words = WORDS.map((text, i) => {
+  words = ACTIVE_WORDS.map((text, i) => {
     const el = document.createElement("span");
     el.className = "word";
     el.textContent = text;
     wordLayer.appendChild(el);
     return {
       text, el, broken: false,
-      angle: (i / WORDS.length) * Math.PI * 2,
+      angle: (i / ACTIVE_WORDS.length) * Math.PI * 2,
       speed: (mobile ? 0.0044 : 0.0036) * (Math.random() * 0.32 + 0.84),
       orbitX: radius + (mobile ? 58 : 86) + Math.random() * (mobile ? 45 : 70),
       orbitY: radius * 0.55 + Math.random() * (mobile ? 36 : 56),
@@ -120,7 +124,6 @@ function drawCracks(r) {
   });
   sphereCtx.shadowBlur = 0;
 }
-
 function drawRipples() { ripples.forEach(r => { sphereCtx.strokeStyle = `rgba(248,242,230,${r.a})`; sphereCtx.lineWidth = 1; sphereCtx.beginPath(); sphereCtx.arc(r.x, r.y, r.radius, 0, Math.PI * 2); sphereCtx.stroke(); }); }
 function drawSparkles() { sparkles.forEach(s => { sphereCtx.fillStyle = `rgba(${s.gold ? "218,188,132" : "255,255,255"},${s.a})`; sphereCtx.fillRect(s.x, s.y, s.s, s.s); }); }
 function drawShards() {
@@ -140,7 +143,7 @@ function drawShards() {
 }
 
 function addCrack(hitX, hitY) {
-  const depth = brokenCount / WORDS.length;
+  const depth = brokenCount / ACTIVE_WORDS.length;
   const mainSteps = 8 + Math.floor(depth * 10);
   const branches = 2 + Math.floor(depth * 4);
   const lines = [];
@@ -173,10 +176,10 @@ function breakNextWord() {
 }
 
 function updateWords(dt) {
-  const remain = Math.max(1, WORDS.length - brokenCount);
+  const remain = Math.max(1, ACTIVE_WORDS.length - brokenCount);
   words.forEach((w) => {
     if (w.broken) return;
-    const instability = (brokenCount / WORDS.length) * 0.005;
+    const instability = (brokenCount / ACTIVE_WORDS.length) * 0.005;
     w.angle += (w.speed + instability + Math.sin(w.phase + performance.now() * 0.001) * 0.0009) * dt;
     const z = Math.sin(w.angle + w.phase);
     const x = center.x + Math.cos(w.angle) * w.orbitX;
@@ -194,7 +197,7 @@ function updateWords(dt) {
     finalClickArmed = true;
     setTimeout(() => {
       if (!endingStarted && finalClickArmed) startEnding();
-    }, reduced ? 200 : 850);
+    }, reduced ? 200 : (isCoarsePointer ? 350 : 850));
   }
 }
 
@@ -231,13 +234,13 @@ function onSpherePointer(ev) {
   const x = ev.clientX - rect.left - rect.width / 2;
   const y = ev.clientY - rect.top - rect.height / 2;
   if (Math.hypot(x, y) > rect.width / 2) return;
-  cooldownUntil = performance.now() + 400;
+  cooldownUntil = performance.now() + CLICK_COOLDOWN;
   const map = 700 / rect.width;
   addCrack(x, y); breakNextWord();
   ripples.push({ x: x * map + 350, y: y * map + 350, radius: 10, a: 0.55 });
   sparkles.push(...Array.from({ length: 16 }, () => ({ x: x * map + 350, y: y * map + 350, vx: (Math.random() - .5) * 2.8, vy: (Math.random() - .2) * 2.2, a: .8, s: Math.random() * 1.8 + .6, gold: Math.random() > .35 })));
   shakeTimer = reduced ? 0 : 140;
-  ambientDim = Math.min(0.86, brokenCount / WORDS.length * 0.9);
+  ambientDim = Math.min(0.86, brokenCount / ACTIVE_WORDS.length * 0.9);
   document.documentElement.style.setProperty("--scene-dim", ambientDim.toFixed(3));
   document.documentElement.style.setProperty("--halo-opacity", `${Math.max(0, 0.95 - ambientDim * 1.1)}`);
 }
@@ -249,7 +252,7 @@ function checkPassword() {
       gate.classList.add("hidden");
       scene.classList.remove("hidden");
       sphereWrap.addEventListener("pointerdown", onSpherePointer);
-    }, reduced ? 20 : 840);
+    }, reduced ? 20 : (isCoarsePointer ? 520 : 840));
   } else {
     gateError.textContent = "Ce n’est pas encore la bonne mémoire.";
     input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake");
@@ -263,9 +266,9 @@ function startEnding() {
     scene.classList.add("hidden"); ending.classList.remove("hidden");
     const l1 = document.getElementById("line-1"), l2 = document.getElementById("line-2"), l3 = document.getElementById("line-3");
     l1.classList.add("show");
-    setTimeout(() => l2.classList.add("show"), reduced ? 400 : 2600);
-    setTimeout(() => l3.classList.add("show"), reduced ? 700 : 5600);
-  }, reduced ? 300 : 1200);
+    setTimeout(() => l2.classList.add("show"), reduced ? 400 : (isCoarsePointer ? 1200 : 2600));
+    setTimeout(() => l3.classList.add("show"), reduced ? 700 : (isCoarsePointer ? 2300 : 5600));
+  }, reduced ? 300 : (isCoarsePointer ? 700 : 1200));
 }
 
 enterBtn.addEventListener("click", checkPassword);
