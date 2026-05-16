@@ -19,7 +19,7 @@ body {
   overflow-y: auto;
 }
 
-.aurora, .petals, .hearts {
+.aurora, .petals, .hearts, .sparkles {
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -40,6 +40,16 @@ body {
     radial-gradient(circle at 70% 60%, rgba(255, 182, 210, 0.38) 0 8px, transparent 8px),
     radial-gradient(circle at 40% 80%, rgba(215, 170, 255, 0.30) 0 7px, transparent 7px);
   animation: heartsFloat 14s linear infinite;
+}
+
+.sparkles {
+  background-image:
+    radial-gradient(circle at 12% 24%, rgba(255, 240, 216, 0.8) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 72% 16%, rgba(255, 255, 255, 0.75) 0 1px, transparent 2px),
+    radial-gradient(circle at 84% 67%, rgba(255, 213, 241, 0.75) 0 1.3px, transparent 2px),
+    radial-gradient(circle at 30% 82%, rgba(255, 247, 210, 0.7) 0 1px, transparent 2px);
+  animation: twinkle 5.5s ease-in-out infinite;
+  mix-blend-mode: screen;
 }
 
 .app {
@@ -79,6 +89,13 @@ body {
 }
 .gate-card button { cursor: pointer; background: linear-gradient(90deg, #ff90ba, #c78fff); color: white; }
 .error { min-height: 1.3rem; color: #ffd4de; }
+.hint {
+  min-height: 1.3rem;
+  margin-top: .3rem;
+  color: #ffeaa9;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+}
 
 .hidden { display: none; }
 .book {
@@ -127,10 +144,13 @@ h3 {
   width: 100%;
   max-width: 560px;
   max-height: min(45dvh, 420px);
-  object-fit: cover;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 18px;
   border: 1px solid rgba(255,255,255,0.35);
   box-shadow: 0 18px 48px rgba(0,0,0,0.38), 0 0 24px rgba(255, 170, 205, 0.3);
+  padding: .2rem;
+  animation: imageGlow 3.8s ease-in-out infinite;
 }
 
 .controls {
@@ -183,4 +203,12 @@ h3 {
   0% { transform: translateY(0); opacity: .45; }
   50% { transform: translateY(-18px); opacity: .6; }
   100% { transform: translateY(0); opacity: .45; }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: .5; transform: scale(1); }
+  50% { opacity: .95; transform: scale(1.03); }
+}
+@keyframes imageGlow {
+  0%, 100% { box-shadow: 0 18px 48px rgba(0,0,0,0.38), 0 0 24px rgba(255, 170, 205, 0.3); }
+  50% { box-shadow: 0 20px 52px rgba(0,0,0,0.43), 0 0 34px rgba(255, 170, 223, 0.55); }
 }
