@@ -3,51 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cicatrices silencieuses</title>
+    <title>Nos univers</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Inter:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="grain" aria-hidden="true"></div>
-    <div class="vignette" aria-hidden="true"></div>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="petals" aria-hidden="true"></div>
 
-    <main class="app" id="app">
-      <section class="gate" id="gate" aria-labelledby="gate-title">
-        <div class="gate-card">
-          <h1 id="gate-title">Avant d’entrer…</h1>
-          <p class="gate-sub">Certaines choses ne s’ouvrent qu’avec un souvenir.</p>
-          <label for="password" class="sr-only">Mot de passe</label>
-          <input id="password" type="password" placeholder="Code à 4 chiffres" autocomplete="off" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" aria-describedby="password-format" />
-          <p id="password-format" class="hint">Format : 4 chiffres.</p>
-          <p class="hint">Indice : une date que le cœur n’oublie pas.</p>
-          <button id="enter-btn" type="button">Entrer</button>
-          <p id="gate-error" class="error" role="status" aria-live="polite"></p>
+    <main class="app">
+      <section class="gate" id="gate">
+        <div class="gate-card glass">
+          <h1>Avant de continuer…</h1>
+          <p>Un secret du cœur ouvre cette histoire.</p>
+          <input id="password" type="password" placeholder="Mot de passe" autocomplete="off" />
+          <button id="enter-btn" type="button">Entrer ✦</button>
+          <p id="gate-error" class="error" aria-live="polite"></p>
         </div>
       </section>
 
-      <section class="scene hidden" id="scene" aria-label="Expérience poétique">
-        <canvas id="bg-canvas" aria-hidden="true"></canvas>
-        <div id="word-layer" aria-hidden="true"></div>
-        <div class="sphere-wrap" id="sphere-wrap">
-          <canvas id="sphere-canvas" width="900" height="900" aria-label="Sphère de verre"></canvas>
-          <div class="halo" id="halo"></div>
-        </div>
-        <div class="overlay-dark" id="overlay-dark"></div>
-      </section>
+      <section class="book hidden" id="book" aria-live="polite">
+        <article class="page active" data-page="1">
+          <p class="intro-text">Et si nous nous étions rencontrés…<br />dans un autre univers, sous d'autres étoiles</p>
+        </article>
 
-      <section class="ending hidden" id="ending" aria-live="polite">
-        <p class="line" id="line-1">Tu savais ce que provoquait chaque clic.</p>
-        <p class="line" id="line-2">Tu l’as fait quand même.</p>
-        <p class="line final" id="line-3">Certaines blessures ne font pas de bruit.<br />Elles restent.</p>
+        <article class="page" data-page="2">
+          <h2>Squid Game</h2>
+          <h3>— là où survivre, c'est déjà aimer —</h3>
+          <p>Dans cet arène cruelle où chaque souffle est un pari contre la mort,<br />
+            nos regards se seraient croisés dans le silence glacé du premier jeu.<br />
+            Tu aurais été mon bouclier, et moi ta raison de ne pas lâcher la main.<br />
+            Oui — nous aurions été ensemble, parce que l'amour naît là où tout finit.</p>
+          <div class="image-placeholder">Emplacement image 1</div>
+        </article>
+
+        <article class="page" data-page="3">
+          <h2>Titanic</h2>
+          <h3>— là où l'océan lui-même pleurait nos noms —</h3>
+          <p>Sur ce navire trop grand pour nos destins trop courts, tu m'aurais tendu<br />
+            la main à la proue, là où le vent efface tout sauf l'essentiel.<br />
+            Et quand les étoiles auraient sombré avec le navire,<br />
+            nous aurions refusé que l'eau froide emporte ce que nos cœurs avaient bâti.</p>
+          <div class="image-placeholder">Emplacement image 2</div>
+        </article>
+
+        <article class="page" data-page="4">
+          <h2>The 8 Show</h2>
+          <h3>— là où le temps s'achète, mais l'amour se vole —</h3>
+          <p>Dans cette tour absurde où chaque heure a un prix, nous aurions appris<br />
+            que le seul luxe véritable était le regard de l'autre posé sur soi.<br />
+            Entre les étages et les jeux cruels, nous nous serions trouvés —<br />
+            deux complices tendres dans un théâtre de l'absurde, inséparables.</p>
+          <div class="image-placeholder">Emplacement image 3</div>
+        </article>
+
+        <article class="page" data-page="5">
+          <h2>The Queen's Gambit</h2>
+          <h3>— là où chaque pièce sacrifiée était un mot d'amour —</h3>
+          <p>Face à l'échiquier, tu aurais deviné mes coups avant que je les pense,<br />
+            et dans ce silence feutré des tournois, nos âmes se seraient reconnues.<br />
+            Car l'amour aussi est une partie d'échecs : on avance, on risque,<br />
+            on sacrifie — et parfois, en perdant la partie, on gagne l'essentiel.</p>
+          <div class="image-placeholder">Emplacement image 4</div>
+        </article>
+
+        <article class="page" data-page="6">
+          <h2>Elemental</h2>
+          <h3>— là où le feu et l'eau osèrent se toucher —</h3>
+          <p>Toi, flamme vive — moi, courant d'eau tranquille. Tout nous séparait,<br />
+            et pourtant chaque fois que nos mondes se frôlaient, quelque chose<br />
+            de nouveau naissait — ni feu ni eau, mais une lumière tiède, unique.<br />
+            Nous aurions appris que les contraires ne s'annulent pas —<br />
+            ils se complètent, et c'est précisément là que l'amour prend racine.</p>
+          <div class="image-placeholder">Emplacement image 5</div>
+        </article>
+
+        <article class="page" data-page="7">
+          <p class="intro-text">Dans chaque univers, chaque vie, chaque histoire…<br />
+            nos âmes se seraient toujours retrouvées. ✦</p>
+        </article>
+
+        <nav class="controls">
+          <button id="prev-btn" type="button">← Retour</button>
+          <span id="page-indicator">Page 1 / 7</span>
+          <button id="next-btn" type="button">Suivant →</button>
+        </nav>
       </section>
     </main>
-
-    <div class="cursor" id="cursor" aria-hidden="true"></div>
 
     <script src="script.js"></script>
   </body>
