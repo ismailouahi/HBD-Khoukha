@@ -29,7 +29,9 @@ function showPage(pageNumber) {
 
 function tryStartMusic() {
   if (!bgMusic) return;
-  bgMusic.currentTime = 0;
+  if (bgMusic.paused) {
+    bgMusic.currentTime = 0;
+  }
   bgMusic.volume = 0.55;
   bgMusic.play().catch(() => {
     const resume = () => {
@@ -49,6 +51,7 @@ function openBook() {
   gate.classList.add("hidden");
   book.classList.remove("hidden");
   showPage(1);
+  tryStartMusic();
 }
 
 enterBtn.addEventListener("click", () => {
@@ -79,6 +82,12 @@ document.addEventListener("keydown", (event) => {
   if (book.classList.contains("hidden")) return;
   if (event.key === "ArrowRight") showPage(currentPage + 1);
   if (event.key === "ArrowLeft") showPage(currentPage - 1);
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    tryStartMusic();
+  }
 });
 
 tryStartMusic();

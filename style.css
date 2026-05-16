@@ -110,6 +110,7 @@ body {
   text-align: center;
   padding: clamp(0.8rem, 2vw, 1.5rem);
   animation: pageIn 700ms ease;
+  position: relative;
 }
 .page.active {
   display: block;
@@ -131,6 +132,23 @@ h3 {
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(1.1rem, 2.4vw, 1.5rem);
   line-height: 1.5;
+  text-shadow: 0 0 12px rgba(255, 185, 216, 0.3), 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.page h2,
+.page h3 {
+  text-shadow: 0 0 16px rgba(255, 170, 205, 0.45), 0 0 28px rgba(207, 148, 255, 0.24);
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  pointer-events: none;
+  background: radial-gradient(circle at 15% 10%, rgba(255, 191, 219, 0.14), transparent 32%),
+              radial-gradient(circle at 85% 80%, rgba(216, 171, 255, 0.12), transparent 30%);
+  animation: veilDrift 7s ease-in-out infinite;
 }
 .intro-text {
   font-family: "Great Vibes", cursive;
@@ -151,6 +169,12 @@ h3 {
   box-shadow: 0 18px 48px rgba(0,0,0,0.38), 0 0 24px rgba(255, 170, 205, 0.3);
   padding: .2rem;
   animation: imageGlow 3.8s ease-in-out infinite;
+  transition: transform 450ms ease, filter 450ms ease;
+}
+
+.page-image:hover {
+  transform: scale(1.02);
+  filter: saturate(1.08) brightness(1.02);
 }
 
 .controls {
@@ -211,4 +235,9 @@ h3 {
 @keyframes imageGlow {
   0%, 100% { box-shadow: 0 18px 48px rgba(0,0,0,0.38), 0 0 24px rgba(255, 170, 205, 0.3); }
   50% { box-shadow: 0 20px 52px rgba(0,0,0,0.43), 0 0 34px rgba(255, 170, 223, 0.55); }
+}
+
+@keyframes veilDrift {
+  0%, 100% { transform: translateY(0); opacity: 0.9; }
+  50% { transform: translateY(-8px); opacity: 1; }
 }
