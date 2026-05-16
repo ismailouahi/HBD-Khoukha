@@ -9,6 +9,7 @@ const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
 const pageIndicator = document.getElementById("page-indicator");
 const pages = Array.from(document.querySelectorAll(".page"));
+const bgMusic = document.getElementById("bg-music");
 
 let currentPage = 1;
 const totalPages = pages.length;
@@ -21,6 +22,24 @@ function showPage(pageNumber) {
   pageIndicator.textContent = `Page ${currentPage} / ${totalPages}`;
   prevBtn.disabled = currentPage === 1;
   nextBtn.disabled = currentPage === totalPages;
+  book.scrollTop = 0;
+}
+
+function tryStartMusic() {
+  if (!bgMusic) return;
+  bgMusic.volume = 0.55;
+  bgMusic.play().catch(() => {
+    const resume = () => {
+      bgMusic.play().catch(() => {});
+      document.removeEventListener("click", resume);
+      document.removeEventListener("touchstart", resume);
+      document.removeEventListener("keydown", resume);
+    };
+
+    document.addEventListener("click", resume, { once: true });
+    document.addEventListener("touchstart", resume, { once: true });
+    document.addEventListener("keydown", resume, { once: true });
+  });
 }
 
 function openBook() {
@@ -52,3 +71,5 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") showPage(currentPage + 1);
   if (event.key === "ArrowLeft") showPage(currentPage - 1);
 });
+
+tryStartMusic();
