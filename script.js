@@ -5,6 +5,7 @@ const book = document.getElementById("book");
 const input = document.getElementById("password");
 const enterBtn = document.getElementById("enter-btn");
 const gateError = document.getElementById("gate-error");
+const gateHint = document.getElementById("gate-hint");
 const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
 const pageIndicator = document.getElementById("page-indicator");
@@ -13,6 +14,7 @@ const bgMusic = document.getElementById("bg-music");
 
 let currentPage = 1;
 const totalPages = pages.length;
+let wrongAttempts = 0;
 
 function showPage(pageNumber) {
   currentPage = Math.min(Math.max(pageNumber, 1), totalPages);
@@ -27,6 +29,7 @@ function showPage(pageNumber) {
 
 function tryStartMusic() {
   if (!bgMusic) return;
+  bgMusic.currentTime = 0;
   bgMusic.volume = 0.55;
   bgMusic.play().catch(() => {
     const resume = () => {
@@ -50,10 +53,16 @@ function openBook() {
 
 enterBtn.addEventListener("click", () => {
   if (input.value.trim() !== PASSWORD) {
+    wrongAttempts += 1;
     gateError.textContent = "Mot de passe incorrect. Réessaie mon cœur.";
+    if (wrongAttempts >= 2) {
+      gateHint.textContent = "Hint : En 4 chiffres : la date à laquelle tu as su que tu m’aimais.";
+    }
     return;
   }
+  wrongAttempts = 0;
   gateError.textContent = "";
+  gateHint.textContent = "";
   openBook();
 });
 
